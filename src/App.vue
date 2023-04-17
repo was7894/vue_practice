@@ -1,64 +1,69 @@
 <template>
   <div class="container">
-    <h1>오늘의 할일😎</h1>
-    <!-- <h1>{{ todo }}</h1> -->
-    <form action="#" class="d-flex" @:submit.prevent="onSubmit">
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="일정을 추가하세요" v-model="todo" />
-        <!-- type을줘야 prevent로 막힘. -->
-        <button class="btn btn-primary" type="submit">추가하기</button>
-      </div>
-    </form>
-    <div class="card">
-      <span v-for="i in todos" :key="i.id">
-        {{ i.subject }}
-      </span>
-    </div>
+    <h1>오늘의 할일</h1>
+    <input v-model="searchText" type="text" class="form-control" placeholder="검색어를 입력하세요" />
+    <TodoBasicForm @add-todo="onSubmit" />
+    <div v-if="!todos.length">등록된 일정이 없습니다</div>
+    <TodoList :todos="filteredTodos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo" />
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
-
+import { ref, computed } from "vue";
+import TodoBasicForm from "./components/TodoBasicForm.vue";
+import TodoList from "./components/TodoList.vue";
 export default {
+  components: {
+    TodoBasicForm,
+    TodoList,
+  },
   setup() {
-    const todo = ref("");
-    let todos = ref([
-      {
-        id: 1,
-        subject: "리액트복습",
-      },
-      {
-        id: 2,
-        subject: "뷰복습",
-      },
-    ]);
-
-    const onSubmit = () => {
-      /* ref으로 감싼건 value로 불러야됨 */
-      console.log(todo.value);
-      todos.value.push({
-        id: Date.now(),
-        subject: todo.value,
-      });
+    const toggle = ref(false);
+    const searchText = ref("");
+    const filteredTodos = computed(() => {
+      console.log("todo:", searchText);
+      if (searchText.value) {
+        return todos.value.filter((todo) => {
+          console.log("todo:", todo, todos.value);
+          return todo.subject.includes(searchText.value);
+        });
+      }
+      return todos.value;
+    });
+    const todos = ref([]);
+    const onSubmit = (todo) => {
+      todos.value.push(todo);
     };
-
-    const updateName = (e) => {
-      console.log(e.target.value);
+    const todoStyle = {
+      textDecoration: "line-through",
+      color: "gray",
+    };
+    const deleteTodo = (index) => {
+      console.log(index);
+      todos.value.splice(index, 1);
+    };
+    const toggleTodo = (index) => {
+      console.log(index);
+      todos.value[index].completed = !todos.value[index].completed;
     };
 
     return {
-      todo,
-      todos,
+      filteredTodos,
       onSubmit,
-      updateName,
+      todos,
+      toggle,
+      todoStyle,
+      deleteTodo,
+      toggleTodo,
+      searchText,
     };
   },
 };
 </script>
 
 <style>
-.red {
-  color: red;
+.todo {
+  color: gray;
+  text-decoration: line-through;
 }
 </style>
