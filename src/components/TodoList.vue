@@ -3,7 +3,7 @@
     <div class="card-body p-2">
       <div class="d-flex" v-for="(i, index) in todos" :key="i.id">
         <div class="form-check flex-grow-1">
-          <label class="form-check-label" :class="{ todo: i.completed }"> <input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(index)" />{{ i.subject }}</label>
+          <label class="form-check-label" :class="{ todo: i.completed }"> {{ i.subject }}<input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(index)" /></label>
         </div>
         <div>
           <button class="btn btn-danger btn-sm" @click="deleteTodo(index)">삭제</button>
