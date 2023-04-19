@@ -5,7 +5,7 @@
     <TodoBasicForm @add-todo="onSubmit" />
     <div style="color: red">{{ error }}</div>
     <div v-if="!todos.length">등록된 일정이 없습니다</div>
-    <TodoList :todos="filteredTodos" @toggle-todo="toggleTodo" @delete-todo="deleteTodo" />
+    <TodoList :todos="filteredTodos" @toggle-todo="toggleTodo" @deleteTodo="deleteTodo" />
   </div>
 </template>
 
@@ -36,10 +36,10 @@ export default {
     const todos = ref([]);
     const getTodos = () => {
       axios
-        .get("http://localhost:3000/todos")
+        .get("http://localhost:8080/todos")
         .then((res) => {
-          console.log("this is todos.value", res);
-          todos.value = res.data;
+          console.log("성공", res);
+          todos.value = res.data.todos;
         })
         .catch((err) => {
           console.error(err);
@@ -50,10 +50,10 @@ export default {
     const onSubmit = (todo) => {
       error.value = "";
       axios
-        .post("http://localhost:3000/todos", { subject: todo.subject, completed: todo.completed })
+
+        .post("http://localhost:8080/todos", { subject: todo.subject, completed: todo.completed })
         .then((res) => {
-          /* 두개이상일때 이렇게 배열처럼 쓴다. */
-          return [console.log("res", res), todos.value.push(res.data)];
+          todos.value.push(res.data.todos);
         })
         .catch((err) => {
           console.error("err", err);
@@ -65,31 +65,27 @@ export default {
       textDecoration: "line-through",
       color: "gray",
     };
+
     const deleteTodo = (index) => {
       error.value = "";
-      const id = todos.value[index].id;
-      // console.log(index);
+      const id = index;
       axios
-        .delete("http://localhost:3000/todos/" + id)
+        .delete("http://localhost:8080/todos/" + id)
         .then((res) => {
-          todos.value.splice(index, 1);
+          getTodos();
         })
         .catch((err) => {
           console.error(err);
         });
     };
     const toggleTodo = (index) => {
-      const id = todos.value[index].id;
+      const id = index;
       axios
-        .patch("http://localhost:3000/todos/" + id, { completed: !todos.value[index].completed })
-        .then(() => {
-          todos.value[index].completed = !todos.value[index].completed;
-        })
+        .post("http://localhost:8080/todos/" + id)
+        .then((res) => {})
         .catch((err) => {
           console.error(err);
         });
-      // console.log(index);
-      // todos.value[index].completed = !todos.value[index].completed;
     };
 
     return {

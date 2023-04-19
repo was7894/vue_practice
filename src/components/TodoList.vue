@@ -1,12 +1,12 @@
 <template>
   <div class="card">
     <div class="card-body p-2">
-      <div class="d-flex" v-for="(i, index) in todos" :key="i.id">
+      <div class="d-flex" v-for="i in todos" :key="i.id">
         <div class="form-check flex-grow-1">
-          <label class="form-check-label" :class="{ todo: i.completed }"> {{ i.subject }}<input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(index)" /></label>
+          <label class="form-check-label" :class="{ todo: i.completed }"> {{ i.subject }}{{ i.id }}<input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(i.id)" /></label>
         </div>
         <div>
-          <button class="btn btn-danger btn-sm" @click="deleteTodo(index)">삭제</button>
+          <button class="btn btn-danger btn-sm" @click="deleteTodo(i.id)">삭제</button>
         </div>
       </div>
     </div>
@@ -24,7 +24,7 @@ export default {
   emits: ["toggle-todo", "deleteTodo"],
   setup(props, { emit }) {
     const toggleTodo = (index) => {
-      console.log(index);
+      console.log("😀id:", index);
       emit("toggle-todo", index);
     };
     const deleteTodo = (index) => {
