@@ -5,7 +5,22 @@
     <TodoBasicForm @add-todo="onSubmit" />
     <div style="color: red">{{ error }}</div>
     <div v-if="!todos.length">등록된 일정이 없습니다</div>
+
     <TodoList :todos="filteredTodos" @toggle-todo="toggleTodo" @deleteTodo="deleteTodo" />
+
+    <nav>
+      <ul class="pagination justify-content-center">
+        <li v-if="currentPage !== 1" class="page-item">
+          <a class="page-link" @click="getTodos(currentPage - 1)" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        <li v-for="page in numberOfPages" :key="{ page }" :class="currentPage === page ? 'active' : ''" class="page-item">
+          <a class="page-link" @click="getTodos(page)"> {{ page }}</a>
+        </li>
+        <li v-if="currentPage !== numberOfPages" class="page-item">
+          <a class="page-link" @click="getTodos(currentPage + 1)">Next</a>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
@@ -14,6 +29,7 @@ import { ref, computed } from "vue";
 import axios from "axios";
 import TodoBasicForm from "./components/TodoBasicForm.vue";
 import TodoList from "./components/TodoList.vue";
+
 export default {
   components: {
     TodoBasicForm,
@@ -23,6 +39,12 @@ export default {
     const error = ref("");
     const toggle = ref(false);
     const searchText = ref("");
+    const totalTodos = ref(0);
+    const limit = 5;
+    const currentPage = ref(1);
+    const numberOfPages = computed(() => {
+      return Math.ceil(totalTodos.value / limit);
+    });
     const filteredTodos = computed(() => {
       console.log("todo:", searchText);
       if (searchText.value) {
@@ -34,12 +56,15 @@ export default {
       return todos.value;
     });
     const todos = ref([]);
-    const getTodos = () => {
+    const getTodos = (page = currentPage.value) => {
+      currentPage.value = page;
+      console.log("currentPage:", currentPage.value);
       axios
-        .get("http://localhost:8080/todos")
+        .get(`http://localhost:8080/todos?_page=${page}&_limit=${limit}`)
         .then((res) => {
-          console.log("성공", res);
-          todos.value = res.data.todos;
+          console.log("성공", res.headers["x-total-count"]);
+          totalTodos.value = res.headers["x-total-count"];
+          todos.value = res.data;
         })
         .catch((err) => {
           console.error(err);
@@ -50,7 +75,6 @@ export default {
     const onSubmit = (todo) => {
       error.value = "";
       axios
-
         .post("http://localhost:8080/todos", { subject: todo.subject, completed: todo.completed })
         .then((res) => {
           todos.value.push(res.data.todos);
@@ -98,6 +122,10 @@ export default {
       deleteTodo,
       toggleTodo,
       searchText,
+      numberOfPages,
+      currentPage,
+      limit,
+      getTodos,
     };
   },
 };
@@ -107,5 +135,8 @@ export default {
 .todo {
   color: gray;
   text-decoration: line-through;
+}
+.page-item {
+  cursor: pointer;
 }
 </style>
