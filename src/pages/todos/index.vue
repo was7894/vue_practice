@@ -1,6 +1,5 @@
 <template>
-  <div class="container">
-    <router-view />
+  <div>
     <h1>오늘의 할일</h1>
     <input v-model="searchText" type="text" class="form-control" placeholder="검색어를 입력하세요" @keyup.enter="searchTodos" />
     <TodoBasicForm @add-todo="onSubmit" />
@@ -129,11 +128,15 @@ export default {
           console.error(err);
         });
     };
-    const toggleTodo = (index) => {
+    const toggleTodo = (index, checked) => {
+      console.log("checked😪", checked);
       const id = index;
       axios
-        .post("http://localhost:8080/todos/" + id)
-        .then((res) => {})
+        .patch("http://localhost:8080/todos/" + id, { completed: checked })
+        .then((res) => {
+          // todos.value[id].completed = checked;
+          console.log("🤨then", todos.value[id]?.completed);
+        })
         .catch((err) => {
           console.error(err);
         });
