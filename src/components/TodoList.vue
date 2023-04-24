@@ -5,7 +5,7 @@
         <label class="form-check-label" :class="{ todo: i.completed }">
           {{ i.subject }}
           <!-- $event -> 이벤트객체 전달. -->
-          <input type="checkbox" class="form-check-input" :value="todos.completed" @click.stop="toggleTodo(i.id, $event)" />
+          <input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(i.id, $event)" @click.stop :checked="i.completed" />
         </label>
       </div>
       <div>

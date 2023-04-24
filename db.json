@@ -1,39 +1,27 @@
 {
   "todos": [
     {
-      "subject": "ㅁㄴㅇㄹ",
-      "completed": true,
-      "id": 20
+      "subject": "망고바보",
+      "id": 20,
+      "completed": true
     },
     {
-      "subject": "뒤페이지",
-      "completed": true,
       "id": 21
     },
     {
-      "subject": "김형섭",
-      "completed": true,
-      "id": 23
+      "subject": "ㅁㄴㅇㄹ",
+      "id": 24,
+      "completed": false
     },
     {
-      "subject": "ㅁㄴㅇㄹㄴㅇㅁㅀ",
-      "completed": false,
-      "id": 24
-    },
-    {
-      "subject": "1",
-      "completed": false,
-      "id": 25
+      "subject": "ㅁㄴㅇㄹ",
+      "id": 25,
+      "completed": false
     },
     {
       "subject": "2",
       "completed": false,
       "id": 26
-    },
-    {
-      "subject": "ㅁㄴㅇㄹ",
-      "completed": false,
-      "id": 27
     }
   ]
 }

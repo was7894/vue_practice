@@ -134,8 +134,9 @@ export default {
       axios
         .patch("http://localhost:8080/todos/" + id, { completed: checked })
         .then((res) => {
+          getTodos();
           // todos.value[id].completed = checked;
-          console.log("🤨then", todos.value[id]?.completed);
+          // console.log("🤨then", todos.value[id]?.completed);
         })
         .catch((err) => {
           console.error(err);
