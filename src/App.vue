@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
       <!-- 네임드라우터 -->
       <router-link :to="{ name: 'Home' }" class="navbar-brand">데쓰노트</router-link>

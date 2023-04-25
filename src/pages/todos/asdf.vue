@@ -22,13 +22,13 @@
     <button class="btn btn-outline-dark ms-2" @click="moveToTodoListPage">취소</button>
   </form>
   <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
-  <div id="mango">😁강아지</div>
+  <!-- <Toast v-else=""/> -->
 </template>
 
 <script>
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import _ from "lodash";
 import Toast from "@/components/Toast.vue";
 
@@ -44,40 +44,19 @@ export default {
     const loading = ref(true);
     const todoId = route.params.id;
     const url = "http://localhost:8080/todos/";
-
     const showToast = ref(false);
     const toastMessage = ref("");
     const toastAlertType = ref("");
-    const timeout = ref(null);
-
-    onMounted(() => {
-      clearTimeout(timeout.value);
-    });
-
-    //   onBeforeMount(() => {
-    //     console.log(document.querySelector("#mango"));
-    //   });
-    // console.log("연결");
-    // onUpdated(() => {
-    //   console.log("업데이트 완료");
-    // });
-    // onBeforeUpdate(() => {
-    //   console.log("업데이트 직전");
-    // });
-    // onUnmounted(()=>{
-    //   console.log("죽음")
-    // });
 
     const triggerToast = (msg, type = "info") => {
       toastMessage.value = msg;
       toastAlertType.value = type;
       showToast.value = true;
-      timeout.value = setTimeout(() => {
-        console.log("움직임 확인👻");
+      setTimeout(() => {
         toastMessage.value = "";
-        toastAlertType.value = "";
+        toastAlertType = "";
         showToast.value = false;
-      }, 8000);
+      }, 1000);
     };
 
     const todoUpdate = computed(() => {

@@ -10,13 +10,12 @@
     },
     {
       "subject": "ㅁㄴㅇㄹ",
-      "id": 24,
-      "completed": false
+      "completed": true,
+      "id": 24
     },
     {
       "subject": "ㅁㄴㅇㄹ",
-      "id": 25,
-      "completed": false
+      "id": 25
     },
     {
       "subject": "2",
