@@ -41,6 +41,7 @@ export default {
     Toast,
     useToast,
   },
+
   setup() {
     const error = ref("");
     const toggle = ref(false);
