@@ -1,8 +1,11 @@
 <template>
   <div>
-    <h1>오늘의 할일</h1>
+    <div class="d-flex justify-content-between mb-3">
+      <h1>오늘의 할일</h1>
+      <button class="btn btn-primary" @click="moveToCreatePage">일정추가</button>
+    </div>
     <input v-model="searchText" type="text" class="form-control" placeholder="검색어를 입력하세요" @keyup.enter="searchTodos" />
-    <TodoBasicForm @add-todo="onSubmit" />
+    <!-- <TodoBasicForm @add-todo="onSubmit" /> -->
     <div style="color: red">{{ error }}</div>
     <div v-if="!todos.length">등록된 일정이 없습니다</div>
 
@@ -28,15 +31,15 @@
 
 <script>
 import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
-import TodoBasicForm from "@/components/TodoBasicForm.vue";
+// import TodoBasicForm from "@/components/TodoBasicForm.vue";
 import TodoList from "@/components/TodoList.vue";
 import { useToast } from "@/composables/toast";
 import { Toast } from "@/components/Toast";
 
 export default {
   components: {
-    TodoBasicForm,
     TodoList,
     Toast,
     useToast,
@@ -44,6 +47,7 @@ export default {
 
   setup() {
     const error = ref("");
+    const router = useRouter();
     const toggle = ref(false);
     const searchText = ref("");
     const totalTodos = ref(0);
@@ -133,6 +137,11 @@ export default {
           console.error(err);
         });
     };
+    const moveToCreatePage = () => {
+      router.push({
+        name: "TodoCreate",
+      });
+    };
 
     return {
       error,
@@ -154,6 +163,7 @@ export default {
       toastMessage,
       toastAlertType,
       timeout,
+      moveToCreatePage,
     };
   },
 };

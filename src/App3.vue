@@ -11,7 +11,7 @@
     <h1>오늘의 할일</h1>
     <input class="form-control" type="text" v-model="searchText" placeholder="Search" />
     <TodoList :todos="todos" @toggle-todo="toggleTodo" @deleteTodo="deleteTodo" />
-    <TodoBasicForm @add-todo="onAdd" />
+    <!-- <TodoBasicForm @add-todo="onAdd" /> -->
     <div v-if="!todos.length">등록된 일정이 없습니다.</div>
   </div>
   <!-- <Props :textProp="내용" /> -->
@@ -19,12 +19,12 @@
 
 <script>
 import { ref, computed } from "vue";
-import TodoBasicForm from "./components/TodoBasicForm.vue";
+// import TodoBasicForm from "./components/TodoBasicForm.vue";
 import TodoList from "./components/TodoList.vue";
 import Props from "./components/Props.vue";
 
 export default {
-  components: { TodoBasicForm, TodoList, Props },
+  components: { TodoList, Props },
   setup() {
     const count = ref(1);
     const doubleCountComputed = computed(() => {

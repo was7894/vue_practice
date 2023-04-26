@@ -1,9 +1,8 @@
 {
   "todos": [
     {
-      "subject": "망고바보",
-      "id": 20,
-      "completed": true
+      "subject": "형섭바보",
+      "id": 20
     },
     {
       "id": 21
@@ -15,7 +14,8 @@
     },
     {
       "subject": "ㅁㄴㅇㄹ",
-      "id": 25
+      "id": 25,
+      "completed": false
     },
     {
       "subject": "2",
