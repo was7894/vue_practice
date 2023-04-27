@@ -9,9 +9,3 @@ export default {
   components: { TodoForm },
 };
 </script>
-
-<style>
-.red {
-  color: red;
-}
-</style>

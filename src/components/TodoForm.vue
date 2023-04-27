@@ -1,5 +1,5 @@
 <template>
-  <h1>일정상세페이지</h1>
+  <h1 v-if="editing">일정상세페이지</h1>
   <div v-if="loading">Loading...</div>
   <form v-else @submit.prevent="onSave">
     <div class="row">
@@ -8,9 +8,10 @@
           <label>일정명:</label>
           <input type="text" class="form-control" v-model="todo.subject" />
         </div>
+        <div class="red" v-if="subjectError">{{ subjectError }}</div>
       </div>
       <div class="col-6">
-        <div class="form-group">
+        <div v-if="editing" class="form-group">
           <label>수행상태:</label>
           <button class="btn" :class="todo.completed ? 'btn-success' : 'btn-danger'" type="button" @click="toggleTodoStatus">
             {{ todo.completed ? "완료" : "미완료" }}
@@ -18,10 +19,17 @@
         </div>
       </div>
     </div>
-    <button class="btn btn-primary" :disabled="!todoUpdate">저장</button>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group"><label>일정내용</label> <textarea class="form-control" cols="30" rows="10" v-model="todo.body"></textarea></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" :disabled="!todoUpdate">{{ editing ? "저장" : "등록" }}</button>
     <button class="btn btn-outline-dark ms-2" @click="moveToTodoListPage">취소</button>
   </form>
-  <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
+  <transition name="fade">
+    <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
+  </transition>
   <div id="mango">😁강아지</div>
 </template>
 
@@ -42,7 +50,9 @@ export default {
   components: {
     Toast,
   },
+
   setup(props) {
+    const subjectError = ref(null);
     const originalTodo = ref(null);
     const route = useRoute();
     const router = useRouter();
@@ -69,7 +79,7 @@ export default {
       toastAlertType.value = type;
       showToast.value = true;
       timeout.value = setTimeout(() => {
-        console.log("움직임 확인👻");
+        // console.log("움직임 확인👻");
         toastMessage.value = "";
         toastAlertType.value = "";
         showToast.value = false;
@@ -83,7 +93,52 @@ export default {
       todo.value.completed = !todo.value.completed;
     };
     const onSave = () => {
-      axios
+      let response;
+      const data = {
+        subject: todo.value.subject,
+        completed: todo.value.completed,
+        body: todo.value.body,
+      };
+      subjectError.value = "";
+      if (!todo.value.subject) {
+        subjectError.value = "일정명은 필수입력사항입니다.";
+      }
+
+      if (props.editing) {
+        //editing; 기존일정수정
+        axios
+          .put(`${url}${todoId}`, data)
+          .then((res) => {
+            originalTodo.value = { ...res.data };
+            triggerToast("등록이 완료되었습니다", "info");
+            // router.push({ name: "Todos" });
+            // console.log("onSave🙂", res);
+          })
+          .catch((err) => {
+            console.error(err);
+            triggerToast("일시적으로 장애가 오류가 발생하였습니다. 잠시 후 다시 이용해 주세요", "danger");
+          });
+      } else {
+        //noediting; 새 일정등록
+        axios
+          .post(`${url}`, data)
+          .then((res) => {
+            response = res;
+            console.log("🍔hamberger", response);
+            originalTodo.value = { ...res.data };
+            triggerToast("등록이 완료되었습니다", "info");
+            // router.push({ name: "Todos" });
+            // console.log("onSave🙂", res);
+            todo.value.subject = "";
+            todo.value.body = "";
+          })
+          .catch((err) => {
+            console.error(err);
+            triggerToast("일시적으로 장애가 오류가 발생하였습니다. 잠시 후 다시 이용해 주세요", "danger");
+          });
+      }
+
+      /*  axios
         .put(`${url}${todoId}`, {
           subject: todo.value.subject,
           complete: todo.value.complete,
@@ -91,12 +146,13 @@ export default {
         .then((res) => {
           originalTodo.value = { ...res.data };
           triggerToast("등록이 완료되었습니다", "info");
+          router.push({ name: "Todos" });
           // console.log("onSave🙂", res);
         })
         .catch((err) => {
           console.error(err);
           triggerToast("일시적으로 장애가 오류가 발생하였습니다. 잠시 후 다시 이용해 주세요", "danger");
-        });
+        }); */
     };
 
     const getTodo = () => {
@@ -136,9 +192,30 @@ export default {
       triggerToast,
       toastMessage,
       toastAlertType,
+      subjectError,
     };
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.red {
+  color: red;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  transform: translateY(0px);
+}
+</style>
