@@ -4,11 +4,7 @@
   <form v-else @submit.prevent="onSave">
     <div class="row">
       <div class="col-6">
-        <div class="form-group">
-          <label>일정명:</label>
-          <input type="text" class="form-control" v-model="todo.subject" />
-        </div>
-        <div class="red" v-if="subjectError">{{ subjectError }}</div>
+        <Input label="일정명" :error="subjectError" />
       </div>
       <div class="col-6">
         <div v-if="editing" class="form-group">
@@ -27,9 +23,11 @@
     <button class="btn btn-primary" :disabled="!todoUpdate">{{ editing ? "저장" : "등록" }}</button>
     <button class="btn btn-outline-dark ms-2" @click="moveToTodoListPage">취소</button>
   </form>
+
   <transition name="fade">
     <Toast v-if="showToast" :message="toastMessage" :type="toastAlertType" />
   </transition>
+
   <div id="mango">😁강아지</div>
 </template>
 
@@ -39,6 +37,7 @@ import axios from "axios";
 import { ref, computed, onMounted } from "vue";
 import _ from "lodash";
 import Toast from "@/components/Toast.vue";
+import Input from "@/components/Inputt.vue";
 
 export default {
   props: {
@@ -49,8 +48,8 @@ export default {
   },
   components: {
     Toast,
+    Input,
   },
-
   setup(props) {
     const subjectError = ref(null);
     const originalTodo = ref(null);
@@ -103,7 +102,6 @@ export default {
       if (!todo.value.subject) {
         subjectError.value = "일정명은 필수입력사항입니다.";
       }
-
       if (props.editing) {
         //editing; 기존일정수정
         axios
@@ -206,13 +204,11 @@ export default {
 .fade-leave-active {
   transition: all 0.5s ease-in-out;
 }
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-30px);
 }
-
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;

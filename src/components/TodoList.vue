@@ -1,27 +1,31 @@
 <template>
-  <div class="card mb-2">
-    <div @click="moveToPage(i.id)" class="card-body p-2 d-flex" v-for="i in todos" :key="i.id" style="cursor: pointer">
-      <div class="form-check flex-grow-1">
-        <label class="form-check-label" :class="{ todo: i.completed }">
-          {{ i.subject }}
-          <!-- $event -> 이벤트객체 전달. -->
-          <input type="checkbox" class="form-check-input" :value="todos.completed" @change="toggleTodo(i.id, $event)" @click.stop :checked="i.completed" />
-        </label>
+  <List :items="todos">
+    <template #default="{ item, index }">
+      <div class="d-flex p-2 align-item-center" @click="moveToPage(item.id)" style="cursor: pointer">
+        <div class="form-check flex-grow-1">
+          <input type="checkbox" class="ml-2 mr-2" :checked="item.completed" @change="toggleTodo(index, $event)" @click.stop />
+          <span :class="{ todo: item.completed }">{{ item.subject }}</span>
+        </div>
+        <div>
+          <!-- stop추가 버블링 막음. -->
+          <button class="btn btn-danger btn-sm" @click.stop="openModal(item.id)">삭제</button>
+          <!-- deleteTodo(i.id) -->
+        </div>
       </div>
-      <div>
-        <!-- stop추가 버블링 막음. -->
-        <button class="btn btn-danger btn-sm" @click.stop="openModal(i.id)">삭제</button>
-        <!-- deleteTodo(i.id) -->
-      </div>
-    </div>
-  </div>
-  <Modal v-if="showModal" @close="closeModal" @delete="deleteTodo" />
+    </template>
+  </List>
+
+  <teleport to="#mango">
+    <Modal v-if="showModal" @close="closeModal" @delete="deleteTodo" />
+  </teleport>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import Modal from "@/components/Modal.vue";
+import Modal from "@/components/DeleteModal.vue";
+import List from "@/components/List.vue";
+
 export default {
   props: {
     todos: {
@@ -31,6 +35,7 @@ export default {
   },
   components: {
     Modal,
+    List,
   },
   emits: ["toggle-todo", "deleteTodo"],
   setup(props, { emit }) {
@@ -41,8 +46,10 @@ export default {
       console.log("😀id, checked:", index, event.target.checked);
       emit("toggle-todo", index, event.target.checked);
     };
-    const deleteTodo = (index) => {
-      emit("deleteTodo", index);
+    const deleteTodo = () => {
+      emit("deleteTodo", todoDeleteId.value);
+      showModal.value = false;
+      todoDeleteId.value = null;
     };
     const moveToPage = (todoId) => {
       // console.log("😏todoid:", todoId);
